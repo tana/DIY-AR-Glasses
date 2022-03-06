@@ -1,0 +1,19 @@
+# Systemd Unit file for auto startup on boot
+# This file should be copied as "/etc/systemd/system/ar.service",
+# and enabled with "sudo systemctl enable ar.service".
+# Reference: https://www.raspberrypi.com/documentation/computers/using_linux.html#creating-a-service
+
+[Unit]
+Description=Programs for DIY AR glasses
+
+[Service]
+ExecStart=/home/pi/ar/start.sh
+WorkingDirectory=/home/pi/ar
+StandardOutput=inherit
+StandardError=inherit
+Restart=no
+User=pi
+
+
+[Install]
+WantedBy=multi-user.target
