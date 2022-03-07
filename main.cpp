@@ -4,6 +4,30 @@
 const int DISPLAY_WIDTH = 240;
 const int DISPLAY_HEIGHT = 240;
 
+// To find these values for a specific controller, use jstest tool
+const int BUTTON_LEFT = 0;
+const int BUTTON_RIGHT = 3;
+const int BUTTON_UP = 2;
+const int BUTTON_DOWN = 1;
+
+void update()
+{
+  for (int gamepad = 0; IsGamepadAvailable(gamepad); ++gamepad) {
+    if (IsGamepadButtonDown(gamepad, BUTTON_LEFT)) {
+      std::cout << "LEFT" << std::endl;
+    }
+    if (IsGamepadButtonDown(gamepad, BUTTON_RIGHT)) {
+      std::cout << "RIGHT" << std::endl;
+    }
+    if (IsGamepadButtonDown(gamepad, BUTTON_UP)) {
+      std::cout << "UP" << std::endl;
+    }
+    if (IsGamepadButtonDown(gamepad, BUTTON_DOWN)) {
+      std::cout << "DOWN" << std::endl;
+    }
+  }
+}
+
 void draw()
 {
   ClearBackground(BLACK);
@@ -29,6 +53,8 @@ int main()
   raylib::RenderTexture textureRight(DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
   while (!window.ShouldClose()) {
+    update();
+
     // Render left eye
     textureLeft.BeginMode();
     draw();
@@ -41,10 +67,8 @@ int main()
 
     // Render to the window
     BeginDrawing();
-    
     DrawTexture(textureLeft.texture, 0, 0, WHITE);
     DrawTexture(textureRight.texture, DISPLAY_WIDTH, 0, WHITE);
-
     EndDrawing();
   }
 
