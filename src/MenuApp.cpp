@@ -57,5 +57,6 @@ void MenuApp::hello()
 
 void MenuApp::shutdown()
 {
-  std::cout << "shutdown" << std::endl;
+  //std::system("shutdown -h +1");  // Shutdown the system after one minute
+  exit(0);
 }

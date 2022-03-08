@@ -9,8 +9,8 @@ const int BUTTON_LEFT = 0;
 const int BUTTON_RIGHT = 3;
 const int BUTTON_UP = 2;
 const int BUTTON_DOWN = 1;
-const int BUTTON_OK = 4;  // TODO
-const int BUTTON_CANCEL = 5;  // TODO
+const int BUTTON_OK = 15;
+const int BUTTON_CANCEL = 14;
 
 void App::update()
 {
@@ -35,7 +35,11 @@ void App::processInput()
 {
   prevOperations = operations;  // Copy
 
+  bool gamepadFound = false;
+
   for (int gamepad = 0; IsGamepadAvailable(gamepad); ++gamepad) {
+    gamepadFound = true;
+
     if (IsGamepadButtonDown(gamepad, BUTTON_LEFT)) {
       operations.insert(Operation::LEFT);
     } else {
@@ -74,40 +78,42 @@ void App::processInput()
   }
 
   // Keyboard operation for development on PC
+  // Use keyboard only when gamepad is not available
+  if (!gamepadFound) {
+    if (IsKeyDown(KEY_LEFT)) {
+      operations.insert(Operation::LEFT);
+    } else {
+      operations.erase(Operation::LEFT);
+    }
 
-  if (IsKeyDown(KEY_LEFT)) {
-    operations.insert(Operation::LEFT);
-  } else {
-    operations.erase(Operation::LEFT);
-  }
+    if (IsKeyDown(KEY_RIGHT)) {
+      operations.insert(Operation::RIGHT);
+    } else {
+      operations.erase(Operation::RIGHT);
+    }
 
-  if (IsKeyDown(KEY_RIGHT)) {
-    operations.insert(Operation::RIGHT);
-  } else {
-    operations.erase(Operation::RIGHT);
-  }
+    if (IsKeyDown(KEY_UP)) {
+      operations.insert(Operation::UP);
+    } else {
+      operations.erase(Operation::UP);
+    }
 
-  if (IsKeyDown(KEY_UP)) {
-    operations.insert(Operation::UP);
-  } else {
-    operations.erase(Operation::UP);
-  }
+    if (IsKeyDown(KEY_DOWN)) {
+      operations.insert(Operation::DOWN);
+    } else {
+      operations.erase(Operation::DOWN);
+    }
 
-  if (IsKeyDown(KEY_DOWN)) {
-    operations.insert(Operation::DOWN);
-  } else {
-    operations.erase(Operation::DOWN);
-  }
+    if (IsKeyDown(KEY_ENTER)) {
+      operations.insert(Operation::OK);
+    } else {
+      operations.erase(Operation::OK);
+    }
 
-  if (IsKeyDown(KEY_ENTER)) {
-    operations.insert(Operation::OK);
-  } else {
-    operations.erase(Operation::OK);
-  }
-
-  if (IsKeyDown(KEY_BACKSPACE)) {
-    operations.insert(Operation::CANCEL);
-  } else {
-    operations.erase(Operation::CANCEL);
+    if (IsKeyDown(KEY_BACKSPACE)) {
+      operations.insert(Operation::CANCEL);
+    } else {
+      operations.erase(Operation::CANCEL);
+    }
   }
 }
