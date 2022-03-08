@@ -9,30 +9,16 @@ const int BUTTON_LEFT = 0;
 const int BUTTON_RIGHT = 3;
 const int BUTTON_UP = 2;
 const int BUTTON_DOWN = 1;
+const int BUTTON_OK = 4;  // TODO
+const int BUTTON_CANCEL = 5;  // TODO
 
 void App::update()
 {
   processInput();
-
-  if (isOperationStarted(Operation::LEFT)) {
-    std::cout << "left" << std::endl;
-  }
 }
 
 void App::draw(Eye eye) const
 {
-  ClearBackground(BLACK);
-
-  const int div = 8;
-  for (int i = 1; i < div; ++i) {
-    // Horizontal line
-    float y = i * float(DISPLAY_HEIGHT) / div;
-    DrawLineV(raylib::Vector2(0, y), raylib::Vector2(DISPLAY_WIDTH, y), WHITE);
-
-    // Vertical line
-    float x = i * float(DISPLAY_WIDTH) / div;
-    DrawLineV(raylib::Vector2(x, 0), raylib::Vector2(x, DISPLAY_HEIGHT), WHITE);
-  }
 }
 
 bool App::isOperationStarted(Operation op) const
@@ -73,6 +59,18 @@ void App::processInput()
     } else {
       operations.erase(Operation::DOWN);
     }
+
+    if (IsGamepadButtonDown(gamepad, BUTTON_OK)) {
+      operations.insert(Operation::OK);
+    } else {
+      operations.erase(Operation::OK);
+    }
+
+    if (IsGamepadButtonDown(gamepad, BUTTON_CANCEL)) {
+      operations.insert(Operation::CANCEL);
+    } else {
+      operations.erase(Operation::CANCEL);
+    }
   }
 
   // Keyboard operation for development on PC
@@ -99,5 +97,17 @@ void App::processInput()
     operations.insert(Operation::DOWN);
   } else {
     operations.erase(Operation::DOWN);
+  }
+
+  if (IsKeyDown(KEY_ENTER)) {
+    operations.insert(Operation::OK);
+  } else {
+    operations.erase(Operation::OK);
+  }
+
+  if (IsKeyDown(KEY_BACKSPACE)) {
+    operations.insert(Operation::CANCEL);
+  } else {
+    operations.erase(Operation::CANCEL);
   }
 }

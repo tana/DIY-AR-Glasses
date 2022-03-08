@@ -9,7 +9,9 @@ add_subdirectory(raylib)
 
 add_subdirectory(raylib-cpp)
 
-add_executable(ar "src/main.cpp" "include/App.h" "src/App.cpp" "include/constants.h")
+add_executable(ar "src/main.cpp" "include/App.h" "src/App.cpp" "include/constants.h" "include/MenuApp.h" "src/MenuApp.cpp")
 target_include_directories(ar PUBLIC "include/")
+
+set_property(TARGET ar PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(ar PUBLIC raylib raylib_cpp)
