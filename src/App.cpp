@@ -21,6 +21,11 @@ void App::draw(Eye eye) const
 {
 }
 
+std::shared_ptr<App> App::getNextApp() const
+{
+  return nextApp;
+}
+
 bool App::isOperationStarted(Operation op) const
 {
   return (prevOperations.find(op) == prevOperations.end()) && (operations.find(op) != operations.end());
@@ -29,6 +34,11 @@ bool App::isOperationStarted(Operation op) const
 bool App::isOperationActive(Operation op) const
 {
   return operations.find(op) != operations.end();
+}
+
+void App::changeApp(std::shared_ptr<App> next)
+{
+  nextApp = next;
 }
 
 void App::processInput()

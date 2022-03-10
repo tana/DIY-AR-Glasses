@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <unordered_set>
 
 enum class Eye
@@ -30,12 +31,16 @@ public:
   // Called for each eye (twice per frame)
   virtual void draw(Eye eye) const;
 
+  std::shared_ptr<App> getNextApp() const;
+
 protected:
   // Check whether op is started in this frame
   bool isOperationStarted(Operation op) const;
 
   // Check whether op is active
   bool isOperationActive(Operation op) const;
+
+  void changeApp(std::shared_ptr<App> next);
 
 private:
   // Abstraction for gamepad and keyboard input
@@ -45,4 +50,6 @@ private:
   void processInput();
 
   std::unordered_set<Operation> operations, prevOperations;
+
+  std::shared_ptr<App> nextApp;
 };

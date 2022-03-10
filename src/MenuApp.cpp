@@ -4,11 +4,12 @@
 #include <iostream>
 #include "raylib-cpp.hpp"
 #include "constants.h"
+#include "CalibrationApp.h"
 
 MenuApp::MenuApp()
   : App()
   , items{
-      { "Hello", std::bind(&MenuApp::hello, this) },
+      { "Calibration", std::bind(&MenuApp::goToCalibration, this) },
       { "Shutdown", std::bind(&MenuApp::shutdown, this) }
     }
 {
@@ -50,9 +51,9 @@ void MenuApp::draw(Eye eye) const
   }
 }
 
-void MenuApp::hello()
+void MenuApp::goToCalibration()
 {
-  std::cout << "hello" << std::endl;
+  changeApp(std::make_shared<CalibrationApp>());
 }
 
 void MenuApp::shutdown()

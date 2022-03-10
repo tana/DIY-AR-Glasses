@@ -15,6 +15,11 @@ int main()
   std::shared_ptr<App> app = std::make_shared<MenuApp>();
 
   while (!window.ShouldClose()) {
+    auto next = app->getNextApp();
+    if (next) {
+      app = next;
+    }
+
     app->update();
 
     // Render left eye

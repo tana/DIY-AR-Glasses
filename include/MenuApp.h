@@ -18,7 +18,7 @@ public:
   void draw(Eye eye) const override;
 
 private:
-  void hello();
+  void goToCalibration();
   void shutdown();
 
   const std::vector<std::pair<std::string, std::function<void()>>> items;
