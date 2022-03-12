@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include "OpticalParams.h"
 
 enum class Eye
 {
@@ -32,6 +33,8 @@ public:
   virtual void draw(Eye eye) const;
 
   std::shared_ptr<App> getNextApp() const;
+
+  std::weak_ptr<OpticalParams> opticalParams;
 
 protected:
   // Check whether op is started in this frame
