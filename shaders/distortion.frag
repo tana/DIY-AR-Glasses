@@ -8,14 +8,16 @@
 // where r = sqrt(x^2 + y^2) .
 // Reference: https://docs.opencv.org/4.x/d9/d0c/group__calib3d.html
 
-#version 120
+#version 100
+
+precision mediump float;
 
 // For meaning of Raylib's predefined variable names,
 // see https://github.com/raysan5/raylib/wiki/raylib-generic-uber-shader-and-custom-shaders
 // and https://github.com/raysan5/raylib/wiki/raylib-default-shader .
 
 uniform sampler2D texture0;
-uniform float k1 = 0.0;
+uniform float k1;
 
 const vec2 center = vec2(0.5, 0.5);
 
