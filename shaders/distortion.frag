@@ -17,9 +17,8 @@ precision mediump float;
 // and https://github.com/raysan5/raylib/wiki/raylib-default-shader .
 
 uniform sampler2D texture0;
+uniform vec2 center;
 uniform float k1;
-
-const vec2 center = vec2(0.5, 0.5);
 
 varying vec2 fragTexCoord;
 

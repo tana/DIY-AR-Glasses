@@ -8,11 +8,15 @@
 #include "constants.h"
 #include "MenuApp.h"
 
-const int NUM_PARAMS = 2;
 const int FONT_SIZE = 20;
 
 const std::vector<std::string> paramNames = {
-  "Left k1", "Right k1"
+  "Left k1", "Right k1",
+  "Left center x", "Right center x", "Left center y", "Right center y"
+};
+const std::vector<float> paramSteps = {
+  0.1f, 0.1f,
+  1.0f, 1.0f, 1.0f, 1.0f
 };
 
 void CalibrationApp::update()
@@ -23,17 +27,17 @@ void CalibrationApp::update()
     selected = std::max(selected - 1, 0);
   }
   if (isOperationStarted(Operation::DOWN)) {
-    selected = std::min(selected + 1, NUM_PARAMS - 1);
+    selected = std::min(selected + 1, static_cast<int>(paramNames.size() - 1));
   }
 
   if (auto params = opticalParams.lock()) { // Check whether the object behind weak_ref is available
     float val = getSelectedParameter(params.get(), selected);
 
     if (isOperationStarted(Operation::LEFT)) {
-      setSelectedParameter(params.get(), selected, val - 0.1f);
+      setSelectedParameter(params.get(), selected, val - paramSteps[selected]);
     }
     if (isOperationStarted(Operation::RIGHT)) {
-      setSelectedParameter(params.get(), selected, val + 0.1f);
+      setSelectedParameter(params.get(), selected, val + paramSteps[selected]);
     }
   }
 
@@ -73,6 +77,14 @@ float CalibrationApp::getSelectedParameter(const OpticalParams* params, int sel)
     return params->leftLens.k1;
   case 1:
     return params->rightLens.k1;
+  case 2:
+    return params->leftLens.center.x;
+  case 3:
+    return params->rightLens.center.x;
+  case 4:
+    return params->leftLens.center.y;
+  case 5:
+    return params->rightLens.center.y;
   default:
     throw std::out_of_range("sel is out of range");
   }
@@ -86,6 +98,18 @@ void CalibrationApp::setSelectedParameter(OpticalParams* params, int sel, float 
     break;
   case 1:
     params->rightLens.k1 = val;
+    break;
+  case 2:
+    params->leftLens.center.x = val;
+    break;
+  case 3:
+    params->rightLens.center.x = val;
+    break;
+  case 4:
+    params->leftLens.center.y = val;
+    break;
+  case 5:
+    params->rightLens.center.y = val;
     break;
   default:
     throw std::out_of_range("sel is out of range");
