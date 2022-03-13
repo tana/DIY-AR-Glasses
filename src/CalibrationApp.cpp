@@ -66,7 +66,11 @@ void CalibrationApp::draw(Eye eye) const
   if (auto params = opticalParams.lock()) { // Check whether the object behind weak_ref is available
     auto text = fmt::format("{} = {:2.2f}", paramNames[selected], getSelectedParameter(params.get(), selected));
     int textWidth = raylib::MeasureText(text, FONT_SIZE);
-    raylib::DrawText(text, DISPLAY_WIDTH / 2 - textWidth / 2, DISPLAY_HEIGHT / 2 - FONT_SIZE / 2, FONT_SIZE, WHITE);
+
+    int x = DISPLAY_WIDTH / 2 - textWidth / 2;
+    int y = DISPLAY_HEIGHT / 2 - FONT_SIZE / 2;
+    DrawRectangle(x - 10, y - 10, textWidth + 20, FONT_SIZE + 20, BLACK);
+    raylib::DrawText(text, x, y, FONT_SIZE, WHITE);
   }
 }
 
