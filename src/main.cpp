@@ -1,6 +1,5 @@
 #include <memory>
 #include "raylib-cpp.hpp"
-#include "constants.h"
 #include "App.h"
 #include "MenuApp.h"
 #include "OpticalParams.h"
@@ -8,12 +7,21 @@
 int main()
 {
   auto opticalParams = std::make_shared<OpticalParams>();
+  
+  if ((opticalParams->leftLens.displayWidth != opticalParams->rightLens.displayWidth)
+    || (opticalParams->leftLens.displayHeight != opticalParams->rightLens.displayHeight)) {
+    TraceLog(LOG_ERROR, "Display size of both displays must be the same");
+    std::exit(-1);
+  }
 
-  raylib::Window window(2 * DISPLAY_WIDTH, DISPLAY_HEIGHT, "");
+  const int displayWidth = opticalParams->leftLens.displayWidth;
+  const int displayHeight = opticalParams->leftLens.displayHeight;
+
+  raylib::Window window(2 * displayWidth, displayHeight, "");
   SetTargetFPS(60);
 
-  raylib::RenderTexture textureLeft(DISPLAY_WIDTH, DISPLAY_HEIGHT);
-  raylib::RenderTexture textureRight(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+  raylib::RenderTexture textureLeft(displayWidth, displayHeight);
+  raylib::RenderTexture textureRight(displayWidth, displayHeight);
 
   SetTextureFilter(textureLeft.texture, TEXTURE_FILTER_BILINEAR);
   SetTextureFilter(textureRight.texture, TEXTURE_FILTER_BILINEAR);
@@ -39,38 +47,38 @@ int main()
 
     // Render left eye
     textureLeft.BeginMode();
-      app->draw(Eye::LEFT);
+      app->draw(Eye::LEFT, displayWidth, displayHeight);
     textureLeft.EndMode();
 
     // Render right eye
     textureRight.BeginMode();
-      app->draw(Eye::RIGHT);
+      app->draw(Eye::RIGHT, displayWidth, displayHeight);
     textureRight.EndMode();
 
     // Render to the window
     BeginDrawing();
       // Left
       shader.BeginMode();
-        const raylib::Vector2 centerLeft = opticalParams->leftLens.center / raylib::Vector2(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+        const raylib::Vector2 centerLeft = opticalParams->leftLens.center / raylib::Vector2(displayWidth, displayHeight);
         shader.SetValue(centerLoc, &centerLeft, SHADER_UNIFORM_VEC2);
         shader.SetValue(k1Loc, &opticalParams->leftLens.k1, SHADER_UNIFORM_FLOAT);
         // Render textures have to be vertically flipped when drawing.
         DrawTextureRec(
           textureLeft.texture,
-          raylib::Rectangle(0, 0, DISPLAY_WIDTH, -DISPLAY_HEIGHT),
+          raylib::Rectangle(0, 0, displayWidth, -displayHeight),
           raylib::Vector2(0, 0),
           WHITE);
       shader.EndMode();
 
       // Right
       shader.BeginMode();
-        const raylib::Vector2 centerRight = opticalParams->rightLens.center / raylib::Vector2(DISPLAY_WIDTH, DISPLAY_HEIGHT);
+        const raylib::Vector2 centerRight = opticalParams->rightLens.center / raylib::Vector2(displayWidth, displayHeight);
         shader.SetValue(centerLoc, &centerRight, SHADER_UNIFORM_VEC2);
         shader.SetValue(k1Loc, &opticalParams->rightLens.k1, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(
           textureLeft.texture,
-          raylib::Rectangle(0, 0, DISPLAY_WIDTH, -DISPLAY_HEIGHT),
-          raylib::Vector2(DISPLAY_WIDTH, 0),
+          raylib::Rectangle(0, 0, displayWidth, -displayHeight),
+          raylib::Vector2(displayWidth, 0),
           WHITE);
       shader.EndMode();
     EndDrawing();

@@ -10,7 +10,7 @@ public:
 
   void update() override;
 
-  void draw(Eye eye) const override;
+  void draw(Eye eye, int displayWidth, int displayHeight) const override;
 
 private:
   float getSelectedParameter(const OpticalParams* params, int sel) const;

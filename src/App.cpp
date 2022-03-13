@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include "raylib-cpp.hpp"
-#include "constants.h"
 
 // To find these values for a specific controller, use jstest tool
 const int BUTTON_LEFT = 0;
@@ -17,7 +16,7 @@ void App::update()
   processInput();
 }
 
-void App::draw(Eye eye) const
+void App::draw(Eye eye, int displayWidth, int displayHeight) const
 {
 }
 

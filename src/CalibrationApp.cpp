@@ -5,7 +5,6 @@
 #include <stdexcept>
 #include "raylib-cpp.hpp"
 #include <fmt/core.h>
-#include "constants.h"
 #include "MenuApp.h"
 
 const int FONT_SIZE = 20;
@@ -46,29 +45,29 @@ void CalibrationApp::update()
   }
 }
 
-void CalibrationApp::draw(Eye eye) const
+void CalibrationApp::draw(Eye eye, int displayWidth, int displayHeight) const
 {
-  App::draw(eye);
+  App::draw(eye, displayWidth, displayHeight);
 
   ClearBackground(BLACK);
 
   const int div = 8;
   for (int i = 1; i < div; ++i) {
     // Horizontal line
-    float y = i * float(DISPLAY_HEIGHT) / div;
-    DrawLineV(raylib::Vector2(0, y), raylib::Vector2(DISPLAY_WIDTH, y), WHITE);
+    float y = i * float(displayHeight) / div;
+    DrawLineV(raylib::Vector2(0, y), raylib::Vector2(displayWidth, y), WHITE);
 
     // Vertical line
-    float x = i * float(DISPLAY_WIDTH) / div;
-    DrawLineV(raylib::Vector2(x, 0), raylib::Vector2(x, DISPLAY_HEIGHT), WHITE);
+    float x = i * float(displayWidth) / div;
+    DrawLineV(raylib::Vector2(x, 0), raylib::Vector2(x, displayHeight), WHITE);
   }
 
   if (auto params = opticalParams.lock()) { // Check whether the object behind weak_ref is available
     auto text = fmt::format("{} = {:2.2f}", paramNames[selected], getSelectedParameter(params.get(), selected));
     int textWidth = raylib::MeasureText(text, FONT_SIZE);
 
-    int x = DISPLAY_WIDTH / 2 - textWidth / 2;
-    int y = DISPLAY_HEIGHT / 2 - FONT_SIZE / 2;
+    int x = displayWidth / 2 - textWidth / 2;
+    int y = displayHeight / 2 - FONT_SIZE / 2;
     DrawRectangle(x - 10, y - 10, textWidth + 20, FONT_SIZE + 20, BLACK);
     raylib::DrawText(text, x, y, FONT_SIZE, WHITE);
   }

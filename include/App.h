@@ -30,7 +30,7 @@ public:
   virtual void update();
 
   // Called for each eye (twice per frame)
-  virtual void draw(Eye eye) const;
+  virtual void draw(Eye eye, int displayWidth, int displayHeight) const;
 
   std::shared_ptr<App> getNextApp() const;
 

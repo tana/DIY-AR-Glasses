@@ -3,7 +3,6 @@
 #include <utility>
 #include <iostream>
 #include "raylib-cpp.hpp"
-#include "constants.h"
 #include "CalibrationApp.h"
 
 MenuApp::MenuApp()
@@ -31,15 +30,15 @@ void MenuApp::update()
   }
 }
 
-void MenuApp::draw(Eye eye) const
+void MenuApp::draw(Eye eye, int displayWidth, int displayHeight) const
 {
-  App::draw(eye);
+  App::draw(eye, displayWidth, displayHeight);
 
   ClearBackground(BLACK);
 
   int i = 0;
   for (const auto& [name, func] : items) {
-    int x = DISPLAY_WIDTH / 2 - raylib::MeasureText(name, FONT_SIZE) / 2;
+    int x = displayWidth / 2 - raylib::MeasureText(name, FONT_SIZE) / 2;
     int y = FONT_SIZE + FONT_SIZE * i;
     raylib::DrawText(name, x, y, FONT_SIZE, WHITE);
 
