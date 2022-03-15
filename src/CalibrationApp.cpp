@@ -11,11 +11,13 @@ const int FONT_SIZE = 20;
 
 const std::vector<std::string> paramNames = {
   "Left k1", "Right k1",
-  "Left center x", "Right center x", "Left center y", "Right center y"
+  "Left center x", "Right center x", "Left center y", "Right center y",
+  "L focal len", "R focal len"
 };
 const std::vector<float> paramSteps = {
   0.1f, 0.1f,
-  1.0f, 1.0f, 1.0f, 1.0f
+  1.0f, 1.0f, 1.0f, 1.0f,
+  1.0f, 1.0f
 };
 
 void CalibrationApp::update()
@@ -88,6 +90,10 @@ float CalibrationApp::getSelectedParameter(const OpticalParams* params, int sel)
     return params->leftLens.center.y;
   case 5:
     return params->rightLens.center.y;
+  case 6:
+    return params->leftLens.focalLength;
+  case 7:
+    return params->rightLens.focalLength;
   default:
     throw std::out_of_range("sel is out of range");
   }
@@ -113,6 +119,12 @@ void CalibrationApp::setSelectedParameter(OpticalParams* params, int sel, float 
     break;
   case 5:
     params->rightLens.center.y = val;
+    break;
+  case 6:
+    params->leftLens.focalLength = val;
+    break;
+  case 7:
+    params->rightLens.focalLength = val;
     break;
   default:
     throw std::out_of_range("sel is out of range");

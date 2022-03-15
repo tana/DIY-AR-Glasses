@@ -76,7 +76,7 @@ int main()
         shader.SetValue(centerLoc, &centerRight, SHADER_UNIFORM_VEC2);
         shader.SetValue(k1Loc, &opticalParams->rightLens.k1, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(
-          textureLeft.texture,
+          textureRight.texture,
           raylib::Rectangle(0, 0, displayWidth, -displayHeight),
           raylib::Vector2(displayWidth, 0),
           WHITE);

@@ -3,11 +3,13 @@
 #include <utility>
 #include <iostream>
 #include "raylib-cpp.hpp"
+#include "Test3DApp.h"
 #include "CalibrationApp.h"
 
 MenuApp::MenuApp()
   : App()
   , items{
+      { "3D test", std::bind(&MenuApp::goTo3DTest, this) },
       { "Calibration", std::bind(&MenuApp::goToCalibration, this) },
       { "Shutdown", std::bind(&MenuApp::shutdown, this) }
     }
@@ -48,6 +50,11 @@ void MenuApp::draw(Eye eye, int displayWidth, int displayHeight) const
 
     ++i;
   }
+}
+
+void MenuApp::goTo3DTest()
+{
+  changeApp(std::make_shared<Test3DApp>());
 }
 
 void MenuApp::goToCalibration()

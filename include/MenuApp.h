@@ -18,6 +18,7 @@ public:
   void draw(Eye eye, int displayWidth, int displayHeight) const override;
 
 private:
+  void goTo3DTest();
   void goToCalibration();
   void shutdown();
 
