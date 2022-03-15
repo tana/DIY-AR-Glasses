@@ -8,14 +8,14 @@ int main()
 {
   auto opticalParams = std::make_shared<OpticalParams>();
   
-  if ((opticalParams->leftLens.displayWidth != opticalParams->rightLens.displayWidth)
-    || (opticalParams->leftLens.displayHeight != opticalParams->rightLens.displayHeight)) {
+  if ((opticalParams->leftEye.displayWidth != opticalParams->rightEye.displayWidth)
+    || (opticalParams->leftEye.displayHeight != opticalParams->rightEye.displayHeight)) {
     TraceLog(LOG_ERROR, "Display size of both displays must be the same");
     std::exit(-1);
   }
 
-  const int displayWidth = opticalParams->leftLens.displayWidth;
-  const int displayHeight = opticalParams->leftLens.displayHeight;
+  const int displayWidth = opticalParams->leftEye.displayWidth;
+  const int displayHeight = opticalParams->leftEye.displayHeight;
 
   raylib::Window window(2 * displayWidth, displayHeight, "");
   SetTargetFPS(60);
@@ -59,9 +59,9 @@ int main()
     BeginDrawing();
       // Left
       shader.BeginMode();
-        const raylib::Vector2 centerLeft = opticalParams->leftLens.center / raylib::Vector2(displayWidth, displayHeight);
+        const raylib::Vector2 centerLeft = opticalParams->leftEye.center / raylib::Vector2(displayWidth, displayHeight);
         shader.SetValue(centerLoc, &centerLeft, SHADER_UNIFORM_VEC2);
-        shader.SetValue(k1Loc, &opticalParams->leftLens.k1, SHADER_UNIFORM_FLOAT);
+        shader.SetValue(k1Loc, &opticalParams->leftEye.k1, SHADER_UNIFORM_FLOAT);
         // Render textures have to be vertically flipped when drawing.
         DrawTextureRec(
           textureLeft.texture,
@@ -72,9 +72,9 @@ int main()
 
       // Right
       shader.BeginMode();
-        const raylib::Vector2 centerRight = opticalParams->rightLens.center / raylib::Vector2(displayWidth, displayHeight);
+        const raylib::Vector2 centerRight = opticalParams->rightEye.center / raylib::Vector2(displayWidth, displayHeight);
         shader.SetValue(centerLoc, &centerRight, SHADER_UNIFORM_VEC2);
-        shader.SetValue(k1Loc, &opticalParams->rightLens.k1, SHADER_UNIFORM_FLOAT);
+        shader.SetValue(k1Loc, &opticalParams->rightEye.k1, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(
           textureRight.texture,
           raylib::Rectangle(0, 0, displayWidth, -displayHeight),

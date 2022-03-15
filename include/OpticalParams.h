@@ -7,8 +7,8 @@ const int DEFAULT_DISPLAY_HEIGHT = 240;
 
 const float DEFAULT_INTERPUPILLARY_DISTANCE = 0.063f; // 63 mm
 
-// Optical parameters of one lens
-struct LensParameters
+// Optical parameters of one eye
+struct EyeParameters
 {
   // Focal length in pixels
   float focalLength = 552.6f;
@@ -26,7 +26,7 @@ struct LensParameters
 // Optical parameters of a whole head-mounted display
 struct OpticalParams
 {
-  LensParameters leftLens{
+  EyeParameters leftEye{
     552.6f,
     raylib::Vector2(DEFAULT_DISPLAY_WIDTH * (0.5f - 0.245f), DEFAULT_DISPLAY_HEIGHT * 0.5f),
     0.0f
@@ -40,7 +40,7 @@ struct OpticalParams
     -DEFAULT_INTERPUPILLARY_DISTANCE / 2, 0.0f, 0.0f, 1.0f
   };
 
-  LensParameters rightLens{
+  EyeParameters rightEye{
     552.6f,
     raylib::Vector2(DEFAULT_DISPLAY_WIDTH * (0.5f + 0.245f), DEFAULT_DISPLAY_HEIGHT * 0.5f),
     0.0f

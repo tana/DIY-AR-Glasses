@@ -79,21 +79,21 @@ float CalibrationApp::getSelectedParameter(const OpticalParams* params, int sel)
 {
   switch (sel) {
   case 0:
-    return params->leftLens.k1;
+    return params->leftEye.k1;
   case 1:
-    return params->rightLens.k1;
+    return params->rightEye.k1;
   case 2:
-    return params->leftLens.center.x;
+    return params->leftEye.center.x;
   case 3:
-    return params->rightLens.center.x;
+    return params->rightEye.center.x;
   case 4:
-    return params->leftLens.center.y;
+    return params->leftEye.center.y;
   case 5:
-    return params->rightLens.center.y;
+    return params->rightEye.center.y;
   case 6:
-    return params->leftLens.focalLength;
+    return params->leftEye.focalLength;
   case 7:
-    return params->rightLens.focalLength;
+    return params->rightEye.focalLength;
   default:
     throw std::out_of_range("sel is out of range");
   }
@@ -103,28 +103,28 @@ void CalibrationApp::setSelectedParameter(OpticalParams* params, int sel, float 
 {
   switch (sel) {
   case 0:
-    params->leftLens.k1 = val;
+    params->leftEye.k1 = val;
     break;
   case 1:
-    params->rightLens.k1 = val;
+    params->rightEye.k1 = val;
     break;
   case 2:
-    params->leftLens.center.x = val;
+    params->leftEye.center.x = val;
     break;
   case 3:
-    params->rightLens.center.x = val;
+    params->rightEye.center.x = val;
     break;
   case 4:
-    params->leftLens.center.y = val;
+    params->leftEye.center.y = val;
     break;
   case 5:
-    params->rightLens.center.y = val;
+    params->rightEye.center.y = val;
     break;
   case 6:
-    params->leftLens.focalLength = val;
+    params->leftEye.focalLength = val;
     break;
   case 7:
-    params->rightLens.focalLength = val;
+    params->rightEye.focalLength = val;
     break;
   default:
     throw std::out_of_range("sel is out of range");
