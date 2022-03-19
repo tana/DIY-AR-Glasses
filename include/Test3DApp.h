@@ -2,6 +2,8 @@
 
 #include "App3D.h"
 
+#include "raylib-cpp.hpp"
+
 class Test3DApp : public App3D
 {
 public:
@@ -14,4 +16,5 @@ protected:
 
 private:
   float angle = 0.0f;
+  raylib::Vector3 pos{ 0.0f, 0.0f, -1.0f };
 };
