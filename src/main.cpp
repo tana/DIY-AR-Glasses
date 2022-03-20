@@ -1,11 +1,31 @@
+/*
 #include <memory>
 #include "raylib-cpp.hpp"
 #include "App.h"
 #include "MenuApp.h"
 #include "OpticalParams.h"
+*/
+
+#include <iostream>
+#include "I2C.h"
+
+const int I2C_BUS_NUM = 1;  // /dev/i2c-1
+const uint16_t MPU6050_I2C_ADDR = 0x68;
+const uint8_t PWR_MGMT_1 = 0x6B;
+const uint8_t TEMP_OUT_H = 0x41;
+const uint8_t WHO_AM_I = 0x75;
 
 int main()
 {
+  I2C i2c(I2C_BUS_NUM);
+  // Reset MPU6050
+  i2c.writeByteReg(MPU6050_I2C_ADDR, PWR_MGMT_1, 0b10000000);
+  // Disable SLEEP mode
+  i2c.writeByteReg(MPU6050_I2C_ADDR, PWR_MGMT_1, 0b00000000);
+
+  std::cout << static_cast<int>(i2c.readByteReg(MPU6050_I2C_ADDR, WHO_AM_I)) << std::endl;
+  
+  /*
   auto opticalParams = std::make_shared<OpticalParams>();
   
   if ((opticalParams->leftEye.displayWidth != opticalParams->rightEye.displayWidth)
@@ -83,6 +103,7 @@ int main()
       shader.EndMode();
     EndDrawing();
   }
+  */
 
   return 0;
 }
