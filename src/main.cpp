@@ -7,23 +7,24 @@
 */
 
 #include <iostream>
+#include <fmt/core.h>
+#include <thread>
+#include <chrono>
 #include "I2C.h"
+#include "MPU6050.h"
 
 const int I2C_BUS_NUM = 1;  // /dev/i2c-1
-const uint16_t MPU6050_I2C_ADDR = 0x68;
-const uint8_t PWR_MGMT_1 = 0x6B;
-const uint8_t TEMP_OUT_H = 0x41;
-const uint8_t WHO_AM_I = 0x75;
 
 int main()
 {
   I2C i2c(I2C_BUS_NUM);
-  // Reset MPU6050
-  i2c.writeByteReg(MPU6050_I2C_ADDR, PWR_MGMT_1, 0b10000000);
-  // Disable SLEEP mode
-  i2c.writeByteReg(MPU6050_I2C_ADDR, PWR_MGMT_1, 0b00000000);
+  MPU6050 imu(&i2c);
 
-  std::cout << static_cast<int>(i2c.readByteReg(MPU6050_I2C_ADDR, WHO_AM_I)) << std::endl;
+  while (true) {
+    imu.read();
+    fmt::print("({},{},{}) ({},{},{})\n", imu.accel[0], imu.accel[1], imu.accel[2], imu.angVel[0], imu.angVel[1], imu.angVel[2]);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  }
   
   /*
   auto opticalParams = std::make_shared<OpticalParams>();
