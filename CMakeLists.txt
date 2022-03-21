@@ -36,6 +36,9 @@ add_executable(ar
 
   "include/MPU6050.h"
   "src/MPU6050.cpp"
+
+  "include/HMC5883L.h"
+  "src/HMC5883L.cpp"
 )
 target_include_directories(ar PUBLIC "include/")
 
