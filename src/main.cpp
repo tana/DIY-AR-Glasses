@@ -19,16 +19,16 @@ const int I2C_BUS_NUM = 1;  // /dev/i2c-1
 int main()
 {
   I2C i2c(I2C_BUS_NUM);
-  //MPU6050 imu(&i2c);
+  MPU6050 imu(&i2c);
   HMC5883L mag(&i2c);
 
+  mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
+
   while (true) {
-    //imu.read();
+    imu.read();
     mag.read();
 
-    //fmt::print("({},{},{}) ({},{},{})\n", imu.accel[0], imu.accel[1], imu.accel[2], imu.angVel[0], imu.angVel[1], imu.angVel[2]);
-    //fmt::print("({},{},{}) ({},{},{}) ({},{},{})\n", imu.accel[0], imu.accel[1], imu.accel[2], imu.angVel[0], imu.angVel[1], imu.angVel[2], mag.field[0], mag.field[1], mag.field[2]);
-    fmt::print("({},{},{})\n", mag.field[0], mag.field[1], mag.field[2]);
+    fmt::print("({},{},{}) ({},{},{}) ({},{},{})\n", imu.accel[0], imu.accel[1], imu.accel[2], imu.angVel[0], imu.angVel[1], imu.angVel[2], mag.field[0], mag.field[1], mag.field[2]);
     std::this_thread::sleep_for(std::chrono::seconds(1));
   }
   

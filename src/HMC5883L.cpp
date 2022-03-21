@@ -52,7 +52,7 @@ void HMC5883L::read()
   };
 
   // Convert to Gauss
-  field[0] = fieldRaw[0] / GAIN_VALUE[static_cast<uint8_t>(gain)];
-  field[1] = fieldRaw[1] / GAIN_VALUE[static_cast<uint8_t>(gain)];
-  field[2] = fieldRaw[2] / GAIN_VALUE[static_cast<uint8_t>(gain)];
+  field[0] = float(fieldRaw[0]) / GAIN_VALUE[static_cast<uint8_t>(gain)];
+  field[1] = float(fieldRaw[1]) / GAIN_VALUE[static_cast<uint8_t>(gain)];
+  field[2] = float(fieldRaw[2]) / GAIN_VALUE[static_cast<uint8_t>(gain)];
 }

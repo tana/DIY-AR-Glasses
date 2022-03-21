@@ -7,6 +7,11 @@
 MPU6050::MPU6050(I2C* i2cBus, uint16_t addr)
   : i2c(i2cBus), devAddr(addr)
 {
+  // Test whether the host can properly communicate with MPU-6050
+  if (i2c->readByteReg(devAddr, WHO_AM_I) != devAddr) {
+    throw std::runtime_error("Incorrect WHO_AM_I value");
+  }
+
   // Reset MPU6050
   i2c->writeByteReg(devAddr, PWR_MGMT_1, 0b10000000);
   // Wait a while after reset
@@ -15,14 +20,12 @@ MPU6050::MPU6050(I2C* i2cBus, uint16_t addr)
   // Disable SLEEP mode
   i2c->writeByteReg(devAddr, PWR_MGMT_1, 0b00000000);
 
-  // Test whether the host can properly communicate with MPU-6050
-  if (i2c->readByteReg(devAddr, WHO_AM_I) != devAddr) {
-    throw std::runtime_error("Incorrect WHO_AM_I value");
-  }
-
   // Set default range
   setAccelRange(AccelRange::FULL_SCALE_2G);
   setGyroRange(GyroRange::FULL_SCALE_250DPS);
+
+  // Wait a while
+  std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
 void MPU6050::read()
