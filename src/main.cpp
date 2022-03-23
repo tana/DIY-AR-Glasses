@@ -1,19 +1,18 @@
-/*
 #include <memory>
+#include <iostream>
+
 #include "raylib-cpp.hpp"
+#include <fmt/core.h>
+
 #include "App.h"
 #include "MenuApp.h"
 #include "OpticalParams.h"
-*/
-
-#include <iostream>
-#include <fmt/core.h>
-#include <thread>
-#include <chrono>
 #include "I2C.h"
 #include "MPU6050.h"
 #include "HMC5883L.h"
+#include "MadgwickFilter.h"
 
+const int FRAME_RATE = 60;
 const int I2C_BUS_NUM = 1;  // /dev/i2c-1
 
 int main()
@@ -21,18 +20,10 @@ int main()
   I2C i2c(I2C_BUS_NUM);
   MPU6050 imu(&i2c);
   HMC5883L mag(&i2c);
-
   mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
 
-  while (true) {
-    imu.read();
-    mag.read();
+  MadgwickFilter filter(1.0f / FRAME_RATE, 0.1f);
 
-    fmt::print("({},{},{}) ({},{},{}) ({},{},{})\n", imu.accel[0], imu.accel[1], imu.accel[2], imu.angVel[0], imu.angVel[1], imu.angVel[2], mag.field[0], mag.field[1], mag.field[2]);
-    std::this_thread::sleep_for(std::chrono::seconds(1));
-  }
-  
-  /*
   auto opticalParams = std::make_shared<OpticalParams>();
   
   if ((opticalParams->leftEye.displayWidth != opticalParams->rightEye.displayWidth)
@@ -45,7 +36,7 @@ int main()
   const int displayHeight = opticalParams->leftEye.displayHeight;
 
   raylib::Window window(2 * displayWidth, displayHeight, "");
-  SetTargetFPS(60);
+  SetTargetFPS(FRAME_RATE);
 
   raylib::RenderTexture textureLeft(displayWidth, displayHeight);
   raylib::RenderTexture textureRight(displayWidth, displayHeight);
@@ -64,6 +55,23 @@ int main()
   app->opticalParams = opticalParams;
 
   while (!window.ShouldClose()) {
+    // Read sensor values
+    imu.read();
+    mag.read();
+    // Convert to device coordinate frame (x is right, y is up, z is back)
+    raylib::Vector3 gyroMeasure(imu.angVel[1], -imu.angVel[0], imu.angVel[2]);
+    raylib::Vector3 accelMeasure(imu.accel[1], -imu.accel[0], imu.accel[2]);
+    raylib::Vector3 magMeasure(-mag.field[0], -mag.field[1], mag.field[2]);
+    // Estimate attitude from sensor measurements
+    filter.deltaTime = GetFrameTime();  // Use actual current frame rate
+    filter.update(gyroMeasure * DEG2RAD, accelMeasure, magMeasure);
+
+    auto leftVec = Vector3RotateByQuaternion(raylib::Vector3(1, 0, 0), filter.attitude);
+    auto upVec = Vector3RotateByQuaternion(raylib::Vector3(0, 1, 0), filter.attitude);
+    // FIXME: fmt::print() does not work correctly?
+    std::cout << fmt::format("left=({: 1.2f},{: 1.2f},{: 1.2f}), up=({: 1.2f},{: 1.2f},{: 1.2f})", leftVec.x, leftVec.y, leftVec.z, upVec.x, upVec.y, upVec.z) << std::endl;
+
+    // Handle app change
     auto next = app->getNextApp();
     if (next) {
       app = next;
@@ -110,7 +118,6 @@ int main()
       shader.EndMode();
     EndDrawing();
   }
-  */
 
   return 0;
 }

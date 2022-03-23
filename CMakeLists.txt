@@ -14,6 +14,8 @@ find_package(fmt)
 add_executable(ar
   "src/main.cpp"
 
+  "include/utils.h"
+
   "include/App.h"
   "src/App.cpp"
 
@@ -39,6 +41,9 @@ add_executable(ar
 
   "include/HMC5883L.h"
   "src/HMC5883L.cpp"
+
+  "include/MadgwickFilter.h"
+  "src/MadgwickFilter.cpp"
 )
 target_include_directories(ar PUBLIC "include/")
 
