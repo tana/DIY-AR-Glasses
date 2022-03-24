@@ -22,7 +22,7 @@ int main()
   HMC5883L mag(&i2c);
   mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
 
-  MadgwickFilter filter(1.0f / FRAME_RATE, 0.1f);
+  MadgwickFilter filter(1.0f / FRAME_RATE, 1.0f);
 
   auto opticalParams = std::make_shared<OpticalParams>();
   
@@ -61,15 +61,17 @@ int main()
     // Convert to device coordinate frame (x is right, y is up, z is back)
     raylib::Vector3 gyroMeasure(imu.angVel[1], -imu.angVel[0], imu.angVel[2]);
     raylib::Vector3 accelMeasure(imu.accel[1], -imu.accel[0], imu.accel[2]);
-    raylib::Vector3 magMeasure(-mag.field[0], -mag.field[1], mag.field[2]);
+    //raylib::Vector3 magMeasure(-mag.field[0], -mag.field[1], mag.field[2]);
+    //raylib::Vector3 gyroMeasure(0, 0, 0);
+    //raylib::Vector3 accelMeasure(0, 1, 0);
+    raylib::Vector3 magMeasure(0, 0, -1);
+    //fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
     // Estimate attitude from sensor measurements
     filter.deltaTime = GetFrameTime();  // Use actual current frame rate
     filter.update(gyroMeasure * DEG2RAD, accelMeasure, magMeasure);
 
-    auto leftVec = Vector3RotateByQuaternion(raylib::Vector3(1, 0, 0), filter.attitude);
-    auto upVec = Vector3RotateByQuaternion(raylib::Vector3(0, 1, 0), filter.attitude);
-    // FIXME: fmt::print() does not work correctly?
-    std::cout << fmt::format("left=({: 1.2f},{: 1.2f},{: 1.2f}), up=({: 1.2f},{: 1.2f},{: 1.2f})", leftVec.x, leftVec.y, leftVec.z, upVec.x, upVec.y, upVec.z) << std::endl;
+    auto euler = filter.attitude.ToEuler() * RAD2DEG;
+    fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
 
     // Handle app change
     auto next = app->getNextApp();

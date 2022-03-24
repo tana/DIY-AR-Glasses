@@ -4,7 +4,7 @@
 #include "utils.h"
 
 MadgwickFilter::MadgwickFilter(float deltaTime, float beta)
-  : deltaTime(deltaTime), beta(beta)
+  : deltaTime(deltaTime), beta(beta), attitude{ .x = 0, .y = 0, .z = 0, .w = 1 }
 {
 }
 
