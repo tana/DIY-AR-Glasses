@@ -15,6 +15,8 @@
 const int FRAME_RATE = 60;
 const int I2C_BUS_NUM = 1;  // /dev/i2c-1
 
+const raylib::Vector3 MAG_OFFSET(0.0054776245, -0.15919901, -0.041336596);
+
 int main()
 {
   I2C i2c(I2C_BUS_NUM);
@@ -61,11 +63,11 @@ int main()
     // Convert to device coordinate frame (x is right, y is up, z is back)
     raylib::Vector3 gyroMeasure(imu.angVel[1], -imu.angVel[0], imu.angVel[2]);
     raylib::Vector3 accelMeasure(imu.accel[1], -imu.accel[0], imu.accel[2]);
-    //raylib::Vector3 magMeasure(-mag.field[0], -mag.field[1], mag.field[2]);
+    raylib::Vector3 magMeasure(-(mag.field[0] - MAG_OFFSET.x), -(mag.field[1] - MAG_OFFSET.y), mag.field[2] - MAG_OFFSET.z);
     //raylib::Vector3 gyroMeasure(0, 0, 0);
     //raylib::Vector3 accelMeasure(0, 1, 0);
-    raylib::Vector3 magMeasure(0, 0, -1);
-    //fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
+    //raylib::Vector3 magMeasure(0, 0, -1);
+    fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
     // Estimate attitude from sensor measurements
     filter.deltaTime = GetFrameTime();  // Use actual current frame rate
     filter.update(gyroMeasure * DEG2RAD, accelMeasure, magMeasure);
