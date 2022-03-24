@@ -67,13 +67,13 @@ int main()
     //raylib::Vector3 gyroMeasure(0, 0, 0);
     //raylib::Vector3 accelMeasure(0, 1, 0);
     //raylib::Vector3 magMeasure(0, 0, -1);
-    fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
+    //fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
     // Estimate attitude from sensor measurements
     filter.deltaTime = GetFrameTime();  // Use actual current frame rate
     filter.update(gyroMeasure * DEG2RAD, accelMeasure, magMeasure);
 
     auto euler = filter.attitude.ToEuler() * RAD2DEG;
-    fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
+    //fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
 
     // Handle app change
     auto next = app->getNextApp();
@@ -82,6 +82,10 @@ int main()
       app->opticalParams = opticalParams;
     }
 
+    // Pass attitude to current app
+    app->attitude = filter.attitude;
+
+    // Update state of current app
     app->update();
 
     // Render left eye

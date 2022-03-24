@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <unordered_set>
+#include "raylib-cpp.hpp"
 #include "OpticalParams.h"
 
 enum class Eye
@@ -35,6 +36,9 @@ public:
   std::shared_ptr<App> getNextApp() const;
 
   std::weak_ptr<OpticalParams> opticalParams;
+
+  // Device attitude (passed by main function)
+  raylib::Quaternion attitude;
 
 protected:
   // Check whether op is started in this frame
