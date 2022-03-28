@@ -11,6 +11,7 @@ add_subdirectory(fmt)
 
 find_package(fmt)
 
+# Main binary
 add_executable(ar
   "src/main.cpp"
 
@@ -51,6 +52,8 @@ set_property(TARGET ar PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(ar PUBLIC raylib raylib_cpp fmt::fmt)
 
+
+# Magnetometer calibration tool
 add_executable(calibrate_mag
   "src/calibrate_mag.cpp"
 
@@ -67,3 +70,22 @@ target_include_directories(calibrate_mag PUBLIC "include/")
 set_property(TARGET calibrate_mag PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(calibrate_mag PUBLIC raylib raylib_cpp fmt::fmt)
+
+
+# Acceleromter calibration tool
+add_executable(calibrate_accel
+  "src/calibrate_accel.cpp"
+
+  "include/utils.h"
+
+  "include/I2C.h"
+  "src/I2C.cpp"
+
+  "include/MPU6050.h"
+  "src/MPU6050.cpp"
+)
+target_include_directories(calibrate_accel PUBLIC "include/")
+
+set_property(TARGET calibrate_accel PROPERTY CXX_STANDARD 17)
+
+target_link_libraries(calibrate_accel PUBLIC raylib raylib_cpp fmt::fmt)

@@ -16,6 +16,7 @@ const int FRAME_RATE = 60;
 const int I2C_BUS_NUM = 1;  // /dev/i2c-1
 
 const raylib::Vector3 MAG_OFFSET(0.0054776245, -0.15919901, -0.041336596);
+const raylib::Matrix IMU_TILT_CORRECT = raylib::Matrix::RotateX(20.0f * DEG2RAD);
 
 int main()
 {
@@ -61,16 +62,19 @@ int main()
     imu.read();
     mag.read();
     // Convert to device coordinate frame (x is right, y is up, z is back)
-    raylib::Vector3 gyroMeasure(-imu.angVel[1], imu.angVel[0], imu.angVel[2]);
+    raylib::Vector3 gyroMeasure(-imu.angVel[1] * DEG2RAD, imu.angVel[0] * DEG2RAD, imu.angVel[2] * DEG2RAD);
     raylib::Vector3 accelMeasure(-imu.accel[1], imu.accel[0], imu.accel[2]);
     raylib::Vector3 magMeasure(mag.field[0] - MAG_OFFSET.x, mag.field[1] - MAG_OFFSET.y, mag.field[2] - MAG_OFFSET.z);
+
+    gyroMeasure = gyroMeasure.Transform(IMU_TILT_CORRECT);
+    accelMeasure = accelMeasure.Transform(IMU_TILT_CORRECT);
     //raylib::Vector3 gyroMeasure(0, 0, 0);
     //raylib::Vector3 accelMeasure(0, 1, 0);
     //raylib::Vector3 magMeasure(0, 0, -1);
     //fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
     // Estimate attitude from sensor measurements
     filter.deltaTime = GetFrameTime();  // Use actual current frame rate
-    filter.update(gyroMeasure * DEG2RAD, accelMeasure, magMeasure);
+    filter.update(gyroMeasure, accelMeasure, magMeasure);
     // Convert from z-up used in Madgwick filter into more graphics-friendly y-up coordinate system
     // Note: this matrix is written in column-major order
     auto attitudeYUp = raylib::Quaternion::FromMatrix(raylib::Matrix{

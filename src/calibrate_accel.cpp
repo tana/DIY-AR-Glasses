@@ -8,7 +8,7 @@
 #include <fmt/core.h>
 
 #include "I2C.h"
-#include "HMC5883L.h"
+#include "MPU6050.h"
 
 const int I2C_BUS_NUM = 1;  // /dev/i2c-1
 
@@ -23,8 +23,7 @@ void handleInterrupt(int signum)
 int main()
 {
   I2C i2c(I2C_BUS_NUM);
-  HMC5883L mag(&i2c);
-  mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
+  MPU6050 imu(&i2c);
 
   // Handle Ctrl+C
   struct sigaction action;
@@ -34,24 +33,26 @@ int main()
     return -1;
   }
 
-  std::cout << "Rotate the device!" << std::endl;
+  std::cout << "Put the MPU6050 in z-up position" << std::endl;
   std::cout << "Press Ctrl+C to stop" << std::endl;
 
   std::vector<raylib::Vector3> measurements; 
 
   // Collect data
   while (!shouldStop) {
-    mag.read();
-    measurements.emplace_back(mag.field[0], mag.field[1], mag.field[2]);
+    imu.read();
+    measurements.emplace_back(imu.accel[0], imu.accel[1], imu.accel[2]);
 
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
   }
 
   // Calculate offset
+  // TODO: compensate device tilt
   const auto sum = std::accumulate(measurements.begin(), measurements.end(), raylib::Vector3(0, 0, 0));
-  const auto offset = sum / measurements.size();
+  const auto offset = sum / measurements.size() - raylib::Vector3(0, 0, 1);  // Subtract gravitational acceleration
 
   fmt::print("Offset = ({}, {}, {})\n", offset.x, offset.y, offset.z);
 
   return 0;
 }
+
