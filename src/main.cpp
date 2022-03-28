@@ -24,7 +24,7 @@ int main()
   HMC5883L mag(&i2c);
   mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
 
-  MadgwickFilter filter(1.0f / FRAME_RATE, 1.0f);
+  MadgwickFilter filter(1.0f / FRAME_RATE, 0.1f);
 
   auto opticalParams = std::make_shared<OpticalParams>();
   
@@ -61,9 +61,9 @@ int main()
     imu.read();
     mag.read();
     // Convert to device coordinate frame (x is right, y is up, z is back)
-    raylib::Vector3 gyroMeasure(imu.angVel[1], -imu.angVel[0], imu.angVel[2]);
-    raylib::Vector3 accelMeasure(imu.accel[1], -imu.accel[0], imu.accel[2]);
-    raylib::Vector3 magMeasure(-(mag.field[0] - MAG_OFFSET.x), -(mag.field[1] - MAG_OFFSET.y), mag.field[2] - MAG_OFFSET.z);
+    raylib::Vector3 gyroMeasure(-imu.angVel[1], imu.angVel[0], imu.angVel[2]);
+    raylib::Vector3 accelMeasure(-imu.accel[1], imu.accel[0], imu.accel[2]);
+    raylib::Vector3 magMeasure(mag.field[0] - MAG_OFFSET.x, mag.field[1] - MAG_OFFSET.y, mag.field[2] - MAG_OFFSET.z);
     //raylib::Vector3 gyroMeasure(0, 0, 0);
     //raylib::Vector3 accelMeasure(0, 1, 0);
     //raylib::Vector3 magMeasure(0, 0, -1);
@@ -71,9 +71,17 @@ int main()
     // Estimate attitude from sensor measurements
     filter.deltaTime = GetFrameTime();  // Use actual current frame rate
     filter.update(gyroMeasure * DEG2RAD, accelMeasure, magMeasure);
+    // Convert from z-up used in Madgwick filter into more graphics-friendly y-up coordinate system
+    // Note: this matrix is written in column-major order
+    auto attitudeYUp = raylib::Quaternion::FromMatrix(raylib::Matrix{
+      1, 0, 0, 0,
+      0, 0, -1, 0,
+      0, -1, 0, 0,
+      0, 0, 0, 1
+    }) * filter.attitude;
 
-    auto euler = filter.attitude.ToEuler() * RAD2DEG;
-    //fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
+    auto euler = attitudeYUp.ToEuler() * RAD2DEG;
+    fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
 
     // Handle app change
     auto next = app->getNextApp();
@@ -83,7 +91,7 @@ int main()
     }
 
     // Pass attitude to current app
-    app->attitude = filter.attitude;
+    app->attitude = attitudeYUp;
 
     // Update state of current app
     app->update();
