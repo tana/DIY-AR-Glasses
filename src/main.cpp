@@ -1,5 +1,6 @@
 #include <memory>
 #include <iostream>
+//#include <fstream>
 
 #include "raylib-cpp.hpp"
 #include <fmt/core.h>
@@ -26,6 +27,11 @@ int main()
   mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
 
   MadgwickFilter filter(1.0f / FRAME_RATE, 0.1f);
+
+  /*
+  std::ofstream log("log.csv");
+  log << "t,gx,gy,gz,ax,ay,az,mx,my,mz,qw,qx,qy,qz" << std::endl;
+  */
 
   auto opticalParams = std::make_shared<OpticalParams>();
   
@@ -87,6 +93,17 @@ int main()
     auto euler = attitudeYUp.ToEuler() * RAD2DEG;
     fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
 
+    // Logging for debug
+    /*
+    log <<
+      GetTime() << "," <<
+      gyroMeasure.x << "," << gyroMeasure.y << "," << gyroMeasure.z << "," <<
+      accelMeasure.x << "," << accelMeasure.y << "," << accelMeasure.z << "," <<
+      magMeasure.x << "," << magMeasure.y << "," << magMeasure.z << "," <<
+      filter.attitude.w << "," << filter.attitude.x << "," << filter.attitude.y << "," << filter.attitude.z <<
+      std::endl;
+    */
+      
     // Handle app change
     auto next = app->getNextApp();
     if (next) {
