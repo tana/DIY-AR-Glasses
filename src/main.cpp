@@ -1,6 +1,5 @@
 #include <memory>
 #include <iostream>
-//#include <fstream>
 
 #include "raylib-cpp.hpp"
 #include <fmt/core.h>
@@ -27,11 +26,6 @@ int main()
   mag.setOutputRate(HMC5883L::DataOutputRate::RATE_75_HZ);
 
   MadgwickFilter filter(1.0f / FRAME_RATE, 0.1f);
-
-  /*
-  std::ofstream log("log.csv");
-  log << "t,gx,gy,gz,ax,ay,az,mx,my,mz,qw,qx,qy,qz" << std::endl;
-  */
 
   auto opticalParams = std::make_shared<OpticalParams>();
   
@@ -63,6 +57,8 @@ int main()
   std::shared_ptr<App> app = std::make_shared<MenuApp>();
   app->opticalParams = opticalParams;
 
+  auto zUpToYUp = raylib::Quaternion::FromAxisAngle(raylib::Vector3(1, 0, 0), -90.0f * DEG2RAD);
+
   while (!window.ShouldClose()) {
     // Read sensor values
     imu.read();
@@ -74,36 +70,11 @@ int main()
 
     gyroMeasure = gyroMeasure.Transform(IMU_TILT_CORRECT);
     accelMeasure = accelMeasure.Transform(IMU_TILT_CORRECT);
-    //raylib::Vector3 gyroMeasure(0, 0, 0);
-    //raylib::Vector3 accelMeasure(0, 1, 0);
-    //raylib::Vector3 magMeasure(0, 0, -1);
-    //fmt::print("({},{},{}), ({},{},{}), ({},{},{})\n", gyroMeasure.x, gyroMeasure.y, gyroMeasure.z, accelMeasure.x, accelMeasure.y, accelMeasure.z, magMeasure.x, magMeasure.y, magMeasure.z);
+
     // Estimate attitude from sensor measurements
     filter.deltaTime = GetFrameTime();  // Use actual current frame rate
     filter.update(gyroMeasure, accelMeasure, magMeasure);
-    // Convert from z-up used in Madgwick filter into more graphics-friendly y-up coordinate system
-    // Note: this matrix is written in column-major order
-    auto attitudeYUp = raylib::Quaternion::FromMatrix(raylib::Matrix{
-      1, 0, 0, 0,
-      0, 0, -1, 0,
-      0, -1, 0, 0,
-      0, 0, 0, 1
-    }) * filter.attitude;
 
-    auto euler = attitudeYUp.ToEuler() * RAD2DEG;
-    fmt::print("{: 3.0f},{: 3.0f},{: 3.0f}\n", euler.x, euler.y, euler.z);
-
-    // Logging for debug
-    /*
-    log <<
-      GetTime() << "," <<
-      gyroMeasure.x << "," << gyroMeasure.y << "," << gyroMeasure.z << "," <<
-      accelMeasure.x << "," << accelMeasure.y << "," << accelMeasure.z << "," <<
-      magMeasure.x << "," << magMeasure.y << "," << magMeasure.z << "," <<
-      filter.attitude.w << "," << filter.attitude.x << "," << filter.attitude.y << "," << filter.attitude.z <<
-      std::endl;
-    */
-      
     // Handle app change
     auto next = app->getNextApp();
     if (next) {
@@ -112,7 +83,7 @@ int main()
     }
 
     // Pass attitude to current app
-    app->attitude = attitudeYUp;
+    app->attitude = zUpToYUp * filter.attitude;
 
     // Update state of current app
     app->update();

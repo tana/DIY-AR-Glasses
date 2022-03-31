@@ -37,6 +37,7 @@ void Test3DApp::draw3D(Eye eye) const
   rlTranslatef(-pos.x, -pos.y, -pos.z);
 
   rlPushMatrix();
+    rlTranslatef(0, 0, -1);
     rlRotatef(angle, 1.0f, 1.0f, 1.0f);
 
     DrawCubeWires(
@@ -47,8 +48,6 @@ void Test3DApp::draw3D(Eye eye) const
 
   // Draw axes of world coordinate frame
   rlPushMatrix();
-    rlScalef(0.1f, 0.1f, 0.1f);
-
     DrawLine3D(raylib::Vector3(0, 0, 0), raylib::Vector3(1, 0, 0), RED);
     DrawLine3D(raylib::Vector3(0, 0, 0), raylib::Vector3(0, 1, 0), GREEN);
     DrawLine3D(raylib::Vector3(0, 0, 0), raylib::Vector3(0, 0, 1), BLUE);
