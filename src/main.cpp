@@ -38,7 +38,7 @@ int main()
     MadgwickFilter filter(1.0f / FRAME_RATE, 0.1f);
 
     const auto targetDeltaTime = std::chrono::milliseconds(1000 / SENSOR_PROCESS_RATE);
-    std::chrono::duration<double> deltaTime = deltaTime;
+    std::chrono::duration<double> deltaTime = targetDeltaTime;
     auto startTime = std::chrono::high_resolution_clock::now();
     auto lastPrintTime = startTime;
     int processCount = 0;
